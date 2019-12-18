@@ -11,9 +11,13 @@ def read_review(file_name, business_id):
     file = open(file_name, "r")
     filedata = file.readlines()
     dataset = []
-
+    
+    filedata = json.loads(filedata[0])
     for line in filedata:
-        data = json.loads(line)
+        
+        data = line
+        # print('data', data, '\n\n')
+        # print(type(data))
         if data['business_id'] == business_id:
             dataset.append(data['text'])
 
@@ -51,11 +55,13 @@ def main():
 
     stop_words = stopwords.words('english')
 
+
     review = read_review(file_name, business_id)
     similarity_martix = similarity_matrix(review, stop_words)
     similarity_graph  = nx.from_numpy_array(similarity_martix)
 
     page_rank = nx.pagerank(similarity_graph, alpha=0.9)
+    print("page_rank", page_rank, '\n')
     most_similar_review_list = [(page_rank[i], sentence) for i,sentence in enumerate(review)]
 
     output_review = ""
@@ -64,8 +70,9 @@ def main():
 
     print(output_review)
 
-nltk.download('stopwords')
-nltk.download('punkt')
-#main("yelp_dataset/review.json", "iojTeSaoPuxm4WeCzDUA6w")
+# nltk.download('stopwords')
+# nltk.download('punkt')
+# main("yelp_dataset/review.json", "iojTeSaoPuxm4WeCzDUA6w")
+
 if __name__ == '__main__':
     main()
